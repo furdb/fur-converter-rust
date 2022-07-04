@@ -1,5 +1,5 @@
 use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
-use std::{char::from_digit, error::Error};
+use std::error::Error;
 
 #[derive(serde::Deserialize)]
 struct EncodeParams {
@@ -29,15 +29,7 @@ pub async fn decode(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> 
     let params = web::Query::<DecodeParams>::from_query(req.query_string()).unwrap();
 
     let binary = params.binary.clone();
-    let decimal: u128 = 0;
+    let decimal = format!("{}", isize::from_str_radix(&binary, 2)?);
 
-    for i in binary.len()..=0 {
-        let cur_add = if binary.chars().nth(i).unwrap() == '1' {
-            10
-        } else {
-            0
-        };
-    }
-
-    Ok(HttpResponse::Ok().body("LALALA"))
+    Ok(HttpResponse::Ok().body(decimal))
 }
