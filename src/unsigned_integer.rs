@@ -14,18 +14,6 @@ pub async fn encode(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> 
     let data = params.data.parse::<u128>()?;
     let size = params.size.parse::<usize>()?;
 
-    // let mut bin = String::new();
-    // while data > 0 {
-    //     bin.push(from_digit((data % 2) as u32, 10).unwrap());
-    //     data /= 2;
-    // }
-
-    // while bin.len() < size as usize {
-    //     bin.push('0');
-    // }
-
-    // bin = bin.chars().rev().collect::<String>();
-
     let bin = format!("{:0size$b}", data, size = size);
 
     Ok(HttpResponse::Ok().body(bin))
