@@ -14,6 +14,7 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(unsigned_integer::encode)
             .service(unsigned_integer::decode)
+            .service(unsigned_integer::compare)
     })
     .bind(("127.0.0.1", 6000))?
     .run()

@@ -33,3 +33,27 @@ pub async fn decode(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> 
 
     Ok(HttpResponse::Ok().body(decimal))
 }
+
+#[derive(serde::Deserialize)]
+struct CompareParams {
+    pub a: String,
+    pub b: String,
+}
+
+#[get("/unsigned_integer/compare")]
+pub async fn compare(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> {
+    let params = web::Query::<CompareParams>::from_query(req.query_string()).unwrap();
+
+    let a = isize::from_str_radix(&params.a, 2)?;
+    let b = isize::from_str_radix(&params.b, 2)?;
+
+    let mut res = "0";
+
+    if a > b {
+        res = "-1";
+    } else if a < b {
+        res = "1";
+    }
+
+    Ok(HttpResponse::Ok().body(res))
+}
