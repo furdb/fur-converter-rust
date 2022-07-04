@@ -1,4 +1,4 @@
-use actix_web::{get, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
 use std::{char::from_digit, error::Error};
 
 #[derive(serde::Deserialize)]
@@ -11,20 +11,22 @@ struct EncodeParams {
 pub async fn encode(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> {
     let params = web::Query::<EncodeParams>::from_query(req.query_string()).unwrap();
 
-    let mut data = params.data.parse::<u128>()?;
-    let size = params.size.parse::<u128>()?;
+    let data = params.data.parse::<u128>()?;
+    let size = params.size.parse::<usize>()?;
 
-    let mut bin = String::new();
-    while data > 0 {
-        bin.push(from_digit((data % 2) as u32, 10).unwrap());
-        data /= 2;
-    }
+    // let mut bin = String::new();
+    // while data > 0 {
+    //     bin.push(from_digit((data % 2) as u32, 10).unwrap());
+    //     data /= 2;
+    // }
 
-    while bin.len() < size as usize {
-        bin.push('0');
-    }
+    // while bin.len() < size as usize {
+    //     bin.push('0');
+    // }
 
-    bin = bin.chars().rev().collect::<String>();
+    // bin = bin.chars().rev().collect::<String>();
+
+    let bin = format!("{:0size$b}", data, size = size);
 
     Ok(HttpResponse::Ok().body(bin))
 }
@@ -42,7 +44,11 @@ pub async fn decode(req: HttpRequest) -> Result<impl Responder, Box<dyn Error>> 
     let decimal: u128 = 0;
 
     for i in binary.len()..=0 {
-        let cur_add = if binary[i as usize] == '1' { 10 } else { 0 };
+        let cur_add = if binary.chars().nth(i).unwrap() == '1' {
+            10
+        } else {
+            0
+        };
     }
 
     Ok(HttpResponse::Ok().body("LALALA"))
